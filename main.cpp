@@ -89,6 +89,27 @@ using namespace std;
             {
                 res=op1 ^ op2;
             }
+             print_in_hex(res);
+
+              print_in_binary(&op1, sizeof(op1));
+            cout<<operat ;
+            print_in_binary(&op2, sizeof(op2));
+            cout<<'=';
+
+
+            if (res== '&' )
+            {
+                res=op1 & op2;
+            }
+            if (res== '|' )
+            {
+                res=op1 | op2;
+            }
+            if (res== '^' )
+            {
+                res=op1 ^ op2;
+            }
+            print_in_binary(res);
     }
 
 int main()
@@ -123,4 +144,5 @@ int main()
     print_in_hex(&u32, sizeof(u32));
     cout << '\n';
     print_in_binary(15);
+    calc(1025, '&', 127);
 }
