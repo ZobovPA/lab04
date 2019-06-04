@@ -1,148 +1,113 @@
-#include <iostream>
-#include <assert.h>
+#include <conio.h>
+#include <cstring>
+#include "byteprint.h"
+
 using namespace std;
 
-    char nibble_to_hex(uint8_t i)
-    {
-        assert(0x0 <= i && i <= 0xf);
-        char symbols[17]= "0123456789abcdef";
-        return symbols[i];
-    }
-
-
-     void print_in_hex(uint8_t byte)
-    {
-        cout<<nibble_to_hex(byte>>4)
-        <<nibble_to_hex(byte & 0x0f);
-    }
-
-
-    const uint8_t*
-    as_bytes(const void* data)
-    {
-    return reinterpret_cast<const uint8_t*>(data);
-    }
-
-
-    void print_in_hex(const void* data, size_t size)
-    {
-        const uint8_t* bytes = as_bytes(data);
-        for (size_t i = 0; i < size; i++) {
-        print_in_hex(bytes[i]);
-        if ((i + 1) % 16 == 0) {
-            cout << '\n';
-        }
-        else {
-            cout << ' ';
-        }
-    }
-    }
-
-    char
-    bit_digit(uint8_t byte, uint8_t bit) {
-    if (byte & (0x1 << bit)) {
-        return '1';
-    }
-    return '0';
-}
-
-    void
-    print_in_binary(uint8_t byte) {
-    for (uint8_t bit = 7; bit > 0; bit--) {
-        cout << bit_digit(byte, bit);
-        if (bit==0)
-            return;
-    }
-}
-
-    void
-    print_in_binary(const void* data, size_t size) {
-    const uint8_t* bytes = as_bytes(data);
-    for (size_t i = 0; i < size; i++) {
-        print_in_binary(bytes[i]);
-        if ((i + 1) % 4 == 0) {
-            cout << '\n';
-        }
-        else {
-            cout << ' ';
-        }
-    }
-}
-
-    calc (uint16_t op1, char operat, uint16_t op2)
-    {
-            print_in_hex(&op1, sizeof(op1));
-            cout<<operat ;
-            print_in_hex(&op2, sizeof(op2));
-            cout<<'=';
-
-            uint16_t res;
-            if (res== '&' )
-            {
-                res=op1 & op2;
-            }
-            if (res== '|' )
-            {
-                res=op1 | op2;
-            }
-            if (res== '^' )
-            {
-                res=op1 ^ op2;
-            }
-             print_in_hex(res);
-
-              print_in_binary(&op1, sizeof(op1));
-            cout<<operat ;
-            print_in_binary(&op2, sizeof(op2));
-            cout<<'=';
-
-
-            if (res== '&' )
-            {
-                res=op1 & op2;
-            }
-            if (res== '|' )
-            {
-                res=op1 | op2;
-            }
-            if (res== '^' )
-            {
-                res=op1 ^ op2;
-            }
-            print_in_binary(res);
-    }
+struct Student
+{
+    char name[17];
+    uint16_t entr_year;
+    float aver_mark;
+    uint8_t gender : 1;
+    uint16_t fin_courses;
+    Student* headman;
+};
 
 int main()
 {
-    assert(nibble_to_hex(0x0) == '0');
-    assert(nibble_to_hex(0x1) == '1');
-    assert(nibble_to_hex(0x2) == '2');
-    assert(nibble_to_hex(0x3) == '3');
-    assert(nibble_to_hex(0x4) == '4');
-    assert(nibble_to_hex(0x5) == '5');
-    assert(nibble_to_hex(0x6) == '6');
-    assert(nibble_to_hex(0x7) == '7');
-    assert(nibble_to_hex(0x8) == '8');
-    assert(nibble_to_hex(0x9) == '9');
-    assert(nibble_to_hex(0x9) == '9');
-    assert(nibble_to_hex(0xa) == 'a');
-    assert(nibble_to_hex(0xb) == 'b');
-    assert(nibble_to_hex(0xc) == 'c');
-    assert(nibble_to_hex(0xd) == 'd');
-    assert(nibble_to_hex(0xe) == 'e');
-    assert(nibble_to_hex(0xf) == 'f');
-    uint8_t u8 = 0x42;
-    cout << "u8 bytes: ";
-    print_in_hex(&u8, sizeof(u8));
-    cout << '\n';
-    uint16_t u16 = 0x42;
-    cout << "u16 bytes: ";
-    print_in_hex(&u16, sizeof(u16));
-    cout << '\n';
-    uint32_t u32 = 0x42;
-    cout << "u32 bytes: ";
-    print_in_hex(&u32, sizeof(u32));
-    cout << '\n';
-    print_in_binary(15);
-    calc(1025, '&', 127);
+    /*
+    uint16_t first, second;
+    char oper;
+    cin >> first >> oper >> second;
+    byte_calc( first, second, oper );
+    */
+
+    Student students[3];
+
+    strcpy( students[0].name, "Matt" );
+    students[0].entr_year = 2018;
+    students[0].aver_mark = 4.6f;
+    students[0].gender = 1;
+    students[0].fin_courses = 1;
+    students[0].headman = nullptr;
+
+    strcpy( students[1].name, "James" );
+    students[1].entr_year = 2018;
+    students[1].aver_mark = 3.4f;
+    students[1].gender = 1;
+    students[1].fin_courses = 1;
+    students[1].headman = &students[0];
+
+    strcpy( students[2].name, "Linsy" );
+    students[2].entr_year = 2018;
+    students[2].aver_mark = 4.3f;
+    students[2].gender = 0;
+    students[2].fin_courses = 1;
+    students[2].headman = &students[0];
+
+    cout << "Adres massiva: " << &students
+         << "\nRazmer massiva: " << sizeof(students);
+    cout << "\n\nAdres elementa massiva: " << &students[0]
+         << "\nRazmer elementa massiva: " << sizeof(students[0])
+         << "\nHexadecimal: ";
+    print_in_hex( &students[0], sizeof( students[0] ) );
+    cout << "\n\nAdres elementa massiva: " << &students[1]
+         << "\nRazmer elementa massiva: " << sizeof(students[1])
+         << "\nHexadecimal: ";
+    print_in_hex( &students[1], sizeof( students[1] ) );
+    cout << "\n\nAdres elementa massiva: " << &students[2]
+         << "\nRazmer elementa massiva: " << sizeof(students[2])
+         << "\nHexadecimal: ";
+    print_in_hex( &students[2], sizeof( students[2] ) );
+
+    cout << "\n\nDlya vtorogo elementa massiva:" << endl;
+
+    cout << "\nName:"
+         << "\nAdres: " << &students[1].name
+         << "\nSmeshcheniye ot nachala: " << offsetof( Student, name )
+         << "\nRazmer: " << sizeof( students[1].name )
+         << "\nBinary: ";
+    print_in_binary( &students[1].name, sizeof( students[1].name ) );
+    cout << "\nHexadecimal: ";
+    print_in_hex( &students[1].name, sizeof( students[1].name ) );
+
+    cout << "\n\nEntrance year:"
+         << "\nAdres: " << &students[1].entr_year
+         << "\nSmeshcheniye ot nachala: " << offsetof( Student, entr_year )
+         << "\nRazmer: " << sizeof( students[1].entr_year )
+         << "\nBinary: ";
+    print_in_binary( &students[1].entr_year, sizeof( students[1].entr_year ) );
+    cout << "\nHexadecimal: ";
+    print_in_hex( &students[1].entr_year, sizeof( students[1].entr_year ) );
+
+    cout << "\n\nAverage mark:"
+         << "\nAdres: " << &students[1].aver_mark
+         << "\nSmeshcheniye ot nachala: " << offsetof( Student, aver_mark )
+         << "\nRazmer: " << sizeof( students[1].aver_mark )
+         << "\nBinary: ";
+    print_in_binary( &students[1].aver_mark, sizeof( students[1].aver_mark ) );
+    cout << "\nHexadecimal: ";
+    print_in_hex( &students[1].aver_mark, sizeof( students[1].aver_mark ) );
+
+    cout << "\n\nFinished courses:"
+         << "\nAdres: " << &students[1].fin_courses
+         << "\nSmeshcheniye ot nachala: " << offsetof( Student, fin_courses )
+         << "\nRazmer: " << sizeof( students[1].fin_courses )
+         << "\nBinary: ";
+    print_in_binary( &students[1].fin_courses, sizeof( students[1].fin_courses ) );
+    cout << "\nHexadecimal: ";
+    print_in_hex( &students[1].fin_courses, sizeof( students[1].fin_courses ) );
+
+    cout << "\n\nStarosta:"
+         << "\nAdres: " << &students[1].headman
+         << "\nSmeshcheniye ot nachala: " << offsetof( Student, headman )
+         << "\nRazmer: " << sizeof( students[1].headman )
+         << "\nBinary: ";
+    print_in_binary( &students[1].headman, sizeof( students[1].headman ) );
+    cout << "\nHexadecimal: ";
+    print_in_hex( &students[1].headman, sizeof( students[1].headman ) );
+
+    getch();
+    return 0;
 }
