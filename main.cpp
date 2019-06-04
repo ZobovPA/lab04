@@ -1,113 +1,91 @@
-#include <conio.h>
+#include <iostream>
+#include <cstdio>
 #include <cstring>
-#include "byteprint.h"
 
 using namespace std;
 
-struct Student
-{
-    char name[17];
-    uint16_t entr_year;
-    float aver_mark;
-    uint8_t gender : 1;
-    uint16_t fin_courses;
-    Student* headman;
-};
+const size_t MAX_SIZE = 256;
+const size_t MAX_EXTENSION = 3;
+const char* forbidden =  "*<>?|\""; //на запрещенные символы
 
 int main()
 {
-    /*
-    uint16_t first, second;
-    char oper;
-    cin >> first >> oper >> second;
-    byte_calc( first, second, oper );
-    */
+    char text[MAX_SIZE];
+    cout << "Enter file name: ";
+    fgets(text, MAX_SIZE, stdin);
+    char* filename = text;
+    filename[strlen(filename) - 1] = '\0';
+    while(true) {
+        if( strcspn( filename, forbidden ) == strlen( filename ) ) ; //
+        else {
+            cout << "Invalid format";
+            break;
+        }
 
-    Student students[3];
+        if( strchr( filename, ':' ) == nullptr ) ;
+        else {
+            char* colon = strchr(filename,':');
+            if( colon - filename + 1 <= 1 ) {
+                cout << "Invalid format"; //на двоеточие
+                break;
+            }
+                if( isalpha( filename[colon - filename - 1] ) > 0 &&
+                    filename[colon - filename + 1] == '\\')
+                    colon = strchr(colon + 1, ':'); // на
+                else {
+                    cout << "Invalid format";
+                    break;
+                }
 
-    strcpy( students[0].name, "Matt" );
-    students[0].entr_year = 2018;
-    students[0].aver_mark = 4.6f;
-    students[0].gender = 1;
-    students[0].fin_courses = 1;
-    students[0].headman = nullptr;
+        }
 
-    strcpy( students[1].name, "James" );
-    students[1].entr_year = 2018;
-    students[1].aver_mark = 3.4f;
-    students[1].gender = 1;
-    students[1].fin_courses = 1;
-    students[1].headman = &students[0];
+        if( strrchr( filename, '.' ) == nullptr )
+            strcat( filename, ".txt" );
 
-    strcpy( students[2].name, "Linsy" );
-    students[2].entr_year = 2018;
-    students[2].aver_mark = 4.3f;
-    students[2].gender = 0;
-    students[2].fin_courses = 1;
-    students[2].headman = &students[0];
+        else {
+            char* ext = strrchr( filename, '.' );
+            for( int i = 1; ext[i] != '\0'; i ++ )
+                *(ext + i) = char(tolower(*(ext + i)));
+            if( strncmp( ext, ".txt", MAX_EXTENSION + 1 ) == 0 ) ; //проверка на расширение
+            else {
+                cout << "Invalid format";
+                break;
+            }
+        }
 
-    cout << "Adres massiva: " << &students
-         << "\nRazmer massiva: " << sizeof(students);
-    cout << "\n\nAdres elementa massiva: " << &students[0]
-         << "\nRazmer elementa massiva: " << sizeof(students[0])
-         << "\nHexadecimal: ";
-    print_in_hex( &students[0], sizeof( students[0] ) );
-    cout << "\n\nAdres elementa massiva: " << &students[1]
-         << "\nRazmer elementa massiva: " << sizeof(students[1])
-         << "\nHexadecimal: ";
-    print_in_hex( &students[1], sizeof( students[1] ) );
-    cout << "\n\nAdres elementa massiva: " << &students[2]
-         << "\nRazmer elementa massiva: " << sizeof(students[2])
-         << "\nHexadecimal: ";
-    print_in_hex( &students[2], sizeof( students[2] ) );
+        FILE* file = fopen( filename, "r" );
+        if( file == nullptr ) {
+            cout << "Invalid file name";
+            break;
+        }
+        fseek( file, 0, SEEK_END ); // переставляет указатель на конец файла
+        long filesize = ftell( file ); //запоминается конец файла
 
-    cout << "\n\nDlya vtorogo elementa massiva:" << endl;
+        char* filedata = new char[filesize];
+        rewind( file ); // возвращает указатель в начала файла
+        fread( filedata, 1, filesize, file );
+        filedata[filesize] = '\0'; //начинает запись, из открытого файла
 
-    cout << "\nName:"
-         << "\nAdres: " << &students[1].name
-         << "\nSmeshcheniye ot nachala: " << offsetof( Student, name )
-         << "\nRazmer: " << sizeof( students[1].name )
-         << "\nBinary: ";
-    print_in_binary( &students[1].name, sizeof( students[1].name ) );
-    cout << "\nHexadecimal: ";
-    print_in_hex( &students[1].name, sizeof( students[1].name ) );
+        char STR[MAX_SIZE];
+        cout << "Enter string: ";
+        fgets(STR, MAX_SIZE, stdin);
+        char* str = STR;
+        *( str + strlen(str) - 1 ) = '\0'; //обращается по указателю к концу значений строки
 
-    cout << "\n\nEntrance year:"
-         << "\nAdres: " << &students[1].entr_year
-         << "\nSmeshcheniye ot nachala: " << offsetof( Student, entr_year )
-         << "\nRazmer: " << sizeof( students[1].entr_year )
-         << "\nBinary: ";
-    print_in_binary( &students[1].entr_year, sizeof( students[1].entr_year ) );
-    cout << "\nHexadecimal: ";
-    print_in_hex( &students[1].entr_year, sizeof( students[1].entr_year ) );
+        int occur = 0;
+        while( *filedata != '\0'  ) {
+           if( strncmp( filedata, str, strlen(str) ) != 0 )
+                filedata += 1;
+           else {
+                occur ++;
+                filedata += 1;
+           }
+        }
+        cout << "Occurance number: " << occur;
 
-    cout << "\n\nAverage mark:"
-         << "\nAdres: " << &students[1].aver_mark
-         << "\nSmeshcheniye ot nachala: " << offsetof( Student, aver_mark )
-         << "\nRazmer: " << sizeof( students[1].aver_mark )
-         << "\nBinary: ";
-    print_in_binary( &students[1].aver_mark, sizeof( students[1].aver_mark ) );
-    cout << "\nHexadecimal: ";
-    print_in_hex( &students[1].aver_mark, sizeof( students[1].aver_mark ) );
-
-    cout << "\n\nFinished courses:"
-         << "\nAdres: " << &students[1].fin_courses
-         << "\nSmeshcheniye ot nachala: " << offsetof( Student, fin_courses )
-         << "\nRazmer: " << sizeof( students[1].fin_courses )
-         << "\nBinary: ";
-    print_in_binary( &students[1].fin_courses, sizeof( students[1].fin_courses ) );
-    cout << "\nHexadecimal: ";
-    print_in_hex( &students[1].fin_courses, sizeof( students[1].fin_courses ) );
-
-    cout << "\n\nStarosta:"
-         << "\nAdres: " << &students[1].headman
-         << "\nSmeshcheniye ot nachala: " << offsetof( Student, headman )
-         << "\nRazmer: " << sizeof( students[1].headman )
-         << "\nBinary: ";
-    print_in_binary( &students[1].headman, sizeof( students[1].headman ) );
-    cout << "\nHexadecimal: ";
-    print_in_hex( &students[1].headman, sizeof( students[1].headman ) );
-
-    getch();
+        delete[] filedata;
+        fclose( file );
+        break;
+    }
     return 0;
 }
